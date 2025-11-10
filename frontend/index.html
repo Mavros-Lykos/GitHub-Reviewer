@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GitHub Reviewer</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GitHub AI Reviewer</title>
+    <link rel="stylesheet" href="/static/style.css">
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+
+    <main class="container">
+        <header class="header">
+            <svg class="header-icon" viewBox="0 0 16 16" version="1.1" width="32" height="32" aria-hidden="true">
+                <path fill-rule="evenodd" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.19 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"></path>
+            </svg>
+            <h1>GitHub Reviewer</h1>
+        </header>
+        <p class="subtitle">AI-powered reviews for repositories and users</p>
+
+        <div class="tabs">
+            <button class="tab-button active" onclick="openTab('repoTab')">Repository Review</button>
+            <button class="tab-button" onclick="openTab('userTab')">User Review</button>
+        </div>
+
+        <div id="repoTab" class="tab-content">
+            <div class="form-group">
+                <div class="input-row">
+                    <div class="input-wrapper">
+                        <label for="owner">Owner</label>
+                        <input type="text" id="owner" placeholder="e.g., pallets">
+                    </div>
+                    <div class="input-wrapper">
+                        <label for="repo">Repository</label>
+                        <input type="text" id="repo" placeholder="e.g., flask">
+                    </div>
+                </div>
+                <button onclick="getRepoReview()" class="btn-primary">Get Repo Review</button>
+            </div>
+
+            <div class="output-section">
+                <div class="output-controls">
+                    <label class="toggle-label" for="repo-toggle">
+                        <div class="toggle-switch">
+                            <input type="checkbox" id="repo-toggle" onchange="toggleView('repo')">
+                            <span class="slider"></span>
+                        </div>
+                        Show HTML Preview
+                    </label>
+                    <div class="button-group">
+                        <button onclick="copyToClipboard('repo')" class="btn-secondary">Copy</button>
+                        <button onclick="downloadContent('repo')" class="btn-secondary">Download</button>
+                    </div>
+                </div>
+                <div id="repo-output" class="output-area">
+                    <div class="placeholder">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M12 16c-3.87 0-7 3.13-7 7M12 16c3.87 0 7 3.13 7 7m-7-7v-2m0-4c-2.21 0-4-1.79-4-4s1.79-4 4-4 4 1.79 4 4-1.79 4-4 4z"></path>
+                            <path d="M12 12c-2.21 0-4-1.79-4-4s1.79-4 4-4 4 1.79 4 4-1.79 4-4 4z"></path>
+                        </svg>
+                        <p>Your AI-powered repository review will appear here.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="userTab" class="tab-content" style="display:none">
+            <div class="form-group">
+                <div class="input-row">
+                    <div class="input-wrapper">
+                        <label for="username">GitHub Username</label>
+                        <input type="text" id="username" placeholder="e.g., torvalds">
+                    </div>
+                </div>
+                <button onclick="getUserReview()" class="btn-primary">Get User Review</button>
+            </div>
+
+            <div class="output-section">
+                <div class="output-controls">
+                    <label class="toggle-label" for="user-toggle">
+                        <div class="toggle-switch">
+                            <input type="checkbox" id="user-toggle" onchange="toggleView('user')">
+                            <span class="slider"></span>
+                        </div>
+                        Show HTML Preview
+                    </label>
+                    <div class="button-group">
+                        <button onclick="copyToClipboard('user')" class="btn-secondary">Copy</button>
+                        <button onclick="downloadContent('user')" class="btn-secondary">Download</button>
+                    </div>
+                </div>
+                <div id="user-output" class="output-area">
+                    <div class="placeholder">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M12 16c-3.87 0-7 3.13-7 7M12 16c3.87 0 7 3.13 7 7m-7-7v-2m0-4c-2.21 0-4-1.79-4-4s1.79-4 4-4 4 1.79 4 4-1.79 4-4 4z"></path>
+                            <path d="M12 12c-2.21 0-4-1.79-4-4s1.79-4 4-4 4 1.79 4 4-1.79 4-4 4z"></path>
+                        </svg>
+                        <p>Your AI-powered user review will appear here.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="/static/script.js"></script>
+</body>
+
+</html>
+
+</html>

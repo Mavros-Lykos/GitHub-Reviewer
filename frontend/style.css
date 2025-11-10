@@ -1,0 +1,385 @@
+/* ---------------------------------
+   Global Settings & Variables
+   --------------------------------- */
+
+:root {
+    --primary-color: #0d6efd; /* Modern blue */
+    --primary-hover: #0b5ed7;
+    --secondary-bg: #e9ecef;
+    --secondary-hover: #dee2e6;
+    --text-color: #212529;
+    --text-muted: #6c757d;
+    --bg-color: #ffffff;
+    --surface-color: #f8f9fa; /* Page background */
+    --border-color: #dee2e6;
+    --border-radius: 8px;
+    --shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    --font-body: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+}
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: var(--font-body);
+    background: var(--surface-color);
+    color: var(--text-color);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+/* ---------------------------------
+   Main Container & Header
+   --------------------------------- */
+
+.container {
+    max-width: 900px;
+    margin: 40px auto;
+    background: var(--bg-color);
+    padding: 32px 40px;
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow);
+}
+
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    margin-bottom: 8px;
+}
+
+.header-icon {
+    fill: var(--text-color);
+}
+
+h1 {
+    text-align: center;
+    color: var(--text-color);
+    font-weight: 700;
+    font-size: 2rem;
+}
+
+.subtitle {
+    text-align: center;
+    color: var(--text-muted);
+    margin-bottom: 32px;
+    font-size: 1.1rem;
+}
+
+/* ---------------------------------
+   Tabs
+   --------------------------------- */
+
+.tabs {
+    display: flex;
+    border-bottom: 1px solid var(--border-color);
+    margin-bottom: 24px;
+}
+
+.tab-button {
+    padding: 12px 20px;
+    background: none;
+    border: none;
+    border-bottom: 2px solid transparent;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    transition: all 0.2s ease;
+    margin-bottom: -1px; /* Aligns border with container border */
+}
+
+.tab-button:hover {
+    color: var(--text-color);
+}
+
+.tab-button.active {
+    color: var(--primary-color);
+    border-bottom-color: var(--primary-color);
+}
+
+.tab-content {
+    padding-top: 16px;
+}
+
+/* ---------------------------------
+   Forms & Inputs
+   --------------------------------- */
+
+.form-group {
+    margin-bottom: 24px;
+}
+
+.input-row {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 16px;
+}
+
+.input-wrapper {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Handles the case for the single-input "User" tab */
+.input-row .input-wrapper:only-child {
+    max-width: 50%;
+}
+
+label {
+    font-size: 0.875rem;
+    font-weight: 600;
+    margin-bottom: 6px;
+    color: var(--text-color);
+}
+
+input[type="text"] {
+    width: 100%;
+    padding: 12px 16px;
+    font-size: 1rem;
+    font-family: var(--font-body);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    transition: all 0.2s ease;
+}
+
+input[type="text"]:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.2);
+}
+
+/* ---------------------------------
+   Buttons
+   --------------------------------- */
+
+.btn-primary,
+.btn-secondary {
+    padding: 12px 20px;
+    font-size: 1rem;
+    font-weight: 600;
+    border: none;
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+}
+
+.btn-primary {
+    background: var(--primary-color);
+    color: #fff;
+    width: 100%;
+}
+
+.btn-primary:hover {
+    background: var(--primary-hover);
+}
+
+.btn-secondary {
+    background: var(--secondary-bg);
+    color: var(--text-color);
+}
+
+.btn-secondary:hover {
+    background: var(--secondary-hover);
+}
+
+.button-group {
+    display: flex;
+    gap: 10px;
+}
+
+/* ---------------------------------
+   Output Section
+   --------------------------------- */
+
+.output-section {
+    margin-top: 32px;
+}
+
+.output-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+    padding: 12px;
+    background: var(--surface-color);
+    border-radius: var(--border-radius);
+}
+
+.output-area {
+    min-height: 200px;
+    max-height: 500px;
+    overflow-y: auto;
+    background: var(--bg-color);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    padding: 24px;
+    font-family: var(--font-body);
+    line-height: 1.7;
+}
+
+.placeholder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    min-height: 200px;
+    text-align: center;
+    color: var(--text-muted);
+}
+
+.placeholder svg {
+    width: 48px;
+    height: 48px;
+    margin-bottom: 16px;
+    stroke: var(--text-muted);
+    opacity: 0.6;
+}
+
+/* ---------------------------------
+   Toggle Switch
+   --------------------------------- */
+
+.toggle-label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+}
+
+.toggle-switch {
+    position: relative;
+    display: inline-block;
+    width: 44px;
+    height: 24px;
+}
+
+.toggle-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    transition: 0.4s;
+    border-radius: 34px;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 18px;
+    width: 18px;
+    left: 3px;
+    bottom: 3px;
+    background-color: white;
+    transition: 0.4s;
+    border-radius: 50%;
+}
+
+input:checked + .slider {
+    background-color: var(--primary-color);
+}
+
+input:checked + .slider:before {
+    transform: translateX(20px);
+}
+
+/* ---------------------------------
+   Markdown/HTML Preview Styling
+   (Inside the output area)
+   --------------------------------- */
+
+.output-area h1,
+.output-area h2,
+.output-area h3,
+.output-area h4 {
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 0.3em;
+    margin-top: 1.5em;
+    margin-bottom: 1em;
+    font-weight: 700;
+}
+
+.output-area p {
+    margin-bottom: 1em;
+}
+
+.output-area code {
+    background-color: var(--surface-color);
+    padding: 0.2em 0.4em;
+    border-radius: 6px;
+    font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+    font-size: 0.9em;
+}
+
+.output-area pre {
+    background-color: var(--surface-color);
+    padding: 16px;
+    border-radius: var(--border-radius);
+    overflow: auto;
+    margin-bottom: 1em;
+}
+
+.output-area pre code {
+    background: none;
+    padding: 0;
+    font-size: 1em;
+    line-height: 1.45;
+}
+
+.output-area ul,
+.output-area ol {
+    margin-bottom: 1em;
+    padding-left: 2em;
+}
+
+.output-area li {
+    margin-bottom: 0.5em;
+}
+
+.output-area blockquote {
+    padding: 0 1em;
+    color: var(--text-muted);
+    border-left: 0.25em solid var(--border-color);
+    margin: 0 0 1em 0;
+}
+
+.output-area table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 1em;
+}
+
+.output-area th,
+.output-area td {
+    border: 1px solid var(--border-color);
+    padding: 8px 12px;
+}
+
+.output-area th {
+    background-color: var(--surface-color);
+    font-weight: 600;
+}
