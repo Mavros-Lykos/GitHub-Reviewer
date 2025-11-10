@@ -1,5 +1,6 @@
 import os
 import base64
+import time
 import requests
 import logging
 from dotenv import load_dotenv
@@ -101,13 +102,30 @@ def generate_repo_review(repo_data):
     """
     try:
         prompt = (
-            "You are a senior software architect. "
-            "Analyze the following GitHub repository data and provide a 3-point review "
-            "covering quality, complexity, and maintainability:\n\n"
-            f"README: {repo_data['readme'][:5000]}\n\n"
-            f"Files: {', '.join(repo_data['files'][:20])}\n\n"
-            f"Languages: {repo_data['languages']}\n"
+            "You are a **senior software architect** and code quality reviewer. "
+            "Analyze the following GitHub repository and produce a concise, structured review "
+            "focusing on **quality, complexity, and maintainability**. "
+            "Use evidence from the README, files, and languages provided.\n\n"
+            "Answer below 300 words use markdown, integrate emojis so that viewer wont be bored"
+            
+            "### Instructions:\n"
+            "- Provide a clear, professional assessment.\n"
+            "- Limit the review to 3 main points: Quality, Complexity, Maintainability.\n"
+            "- Be objective and evidence-based; do not speculate beyond the provided data.\n"
+            "- Suggest **concrete improvements** if any weaknesses are identified.\n\n"
+            
+            "### Repository Data:\n"
+            f"- README (first 5000 chars):\n{repo_data['readme'][:5000]}\n\n"
+            f"- Top Files (up to 20): {', '.join(repo_data['files'][:20])}\n"
+            f"- Languages: {', '.join(repo_data['languages']) if isinstance(repo_data['languages'], list) else repo_data['languages']}\n"
+            
+            "### Output Format (Markdown, strict):\n"
+            "1. **Quality** – Describe code readability, documentation, and adherence to best practices.\n"
+            "2. **Complexity** – Evaluate code structure, modularity, and algorithmic sophistication.\n"
+            "3. **Maintainability** – Comment on ease of updates, testing, and potential technical debt.\n"
+            "Include **1–2 actionable recommendations** to improve the repository in each category.\n"
         )
+
         
         response = client.models.generate_content(
             model="gemini-2.5-flash",
@@ -151,7 +169,7 @@ def fetch_user_data(username: str):
 
         # Collect top repos info
         top_repos = []
-        for repo in sorted(repos, key=lambda x: x["stargazers_count"], reverse=True)[:5]:
+        for repo in sorted(repos, key=lambda x: x["stargazers_count"], reverse=True):
             top_repos.append({
                 "name": repo["name"],
                 "description": repo["description"],
@@ -191,37 +209,100 @@ def generate_user_review(user_data):
     Raises:
         RuntimeError: If API call fails
     """
-    try:
-        prompt = (
-            "You are a technical recruiter and GitHub analyst.\n"
-            "Review the following GitHub user's profile and top repositories. Summarize their main programming focus,\n"
-            "strengths, and potential areas for improvement.\n\n"
-            "Profile:\n"
-            f"Name: {user_data['profile']['name']}\n"
-            f"Bio: {user_data['profile']['bio']}\n"
-            f"Location: {user_data['profile']['location']}\n"
-            f"Followers: {user_data['profile']['followers']}\n"
-            f"Following: {user_data['profile']['following']}\n\n"
-            "Top Repos:\n"
-        )
+    model_primary = "gemini-2.5-flash"
+    model_fallback = "gemini-2.5-flash-lite"
+    max_retries = 5
+
+    # Build repos section separately to avoid nested f-strings with escapes
+    repos = user_data.get('top_repos', [])
+    if repos:
+        repo_lines = []
+        for repo in repos:
+            name = repo.get('name', 'N/A')
+            stars = repo.get('stars', 0)
+            forks = repo.get('forks', 0)
+            desc = repo.get('description', 'No description')
+            repo_lines.append(f"- **{name}** (Stars: {stars}, Forks: {forks})\n  Description: {desc}")
+        repos_section = "\n".join(repo_lines)
+    else:
+        repos_section = "- No repositories found."
+
+    prompt = (
         
-        for repo in user_data['top_repos']:
-            prompt += (
-                f"- {repo['name']} (Stars: {repo['stars']}, Forks: {repo['forks']})\n"
-                f"  Description: {repo['description']}\n"
+        "You are an **experienced senior technical recruiter and GitHub talent analyst**.  "
+        "Your goal is to evaluate the following GitHub developer profile and top repositories "
+        "to produce a **career-oriented technical assessment**.\n\n"
+
+        "### 🎯 **Your Objectives**\n"
+        "Based only on the provided GitHub data:\n"
+        "1. Determine the developer’s **main technical areas** (languages, frameworks, or focus domains).  \n"
+        "2. Rate their **demonstrated coding expertise** on a **scale of 1–10**, where:\n"
+        "   - 1–3 = Beginner (limited visible work)\n"
+        "   - 4–6 = Intermediate (functional but limited complexity)\n"
+        "   - 7–8 = Advanced (consistent, strong technical signal)\n"
+        "   - 9–10 = Expert (exceptional, high-impact open-source or complex contributions)\n"
+        "3. Recommend a **suitable job position or career level** (e.g., “Junior Backend Developer”, “Full-Stack Engineer”, “Data Science Intern”, “Senior DevOps Engineer”).\n"
+        "4. Provide **actionable feedback** on how they could enhance their skills or portfolio to reach the *next career level*.\n\n"
+
+        "### 🧩 **Output Format (Strict)**\n"
+        "Produce your response in the following markdown sections:\n\n"
+        "#### 🧠 Technical Focus\n"
+        "Summarize the developer’s core languages, tools, and interests.\n\n"
+        "#### 💪 Expertise Assessment (1–10)\n"
+        "Provide a 1–10 rating of overall GitHub coding expertise, with a one-line proper justification.\n\n"
+        "#### 💼 Suitable Role\n"
+        "Suggest one or two realistic job positions or career directions that match the profile.\n\n"
+        "#### 🚀 Growth Recommendations\n"
+        "Write 2–3 short bullet points with **specific next steps** for improving technical or professional standing.\n\n"
+
+        "### ⚙️ **Tone and Constraints**\n"
+        "- Be concise, objective, and professional — like a real recruiter’s feedback summary.\n"
+        "- Do **not guess**; if key info is missing, acknowledge it.\n"
+        "- Limit the entire output to **under 450 words**.\n"
+        "- Use **neutral, evidence-based** language — avoid exaggeration or flattery.\n"
+        "- Focus on *visible signals of skill* (e.g., repo activity, stars, clarity, diversity).\n\n"
+
+        "### 👤 **Profile Information**\n"
+        f"- Name: {user_data['profile'].get('name', 'N/A')}\n"
+        f"- Bio: {user_data['profile'].get('bio', 'N/A')}\n"
+        f"- Location: {user_data['profile'].get('location', 'N/A')}\n"
+        f"- Followers: {user_data['profile'].get('followers', 0)}\n"
+        f"- Following: {user_data['profile'].get('following', 0)}\n\n"
+
+        "### 📦 **Top Repositories**\n"
+        + "".join([
+            f"- **{repo['name']}** (⭐ {repo.get('stars', 0)}, 🍴 {repo.get('forks', 0)})\n"
+            f"  Description: {repo.get('description', 'No description')}\n"
+            for repo in user_data.get('top_repos', [])
+        ]) or "- No repositories found.\n"
+
+    )
+    
+
+    for attempt in range(max_retries):
+        model_to_use = model_primary if attempt == 0 else model_fallback
+        try:
+            response = client.models.generate_content(
+                model=model_to_use,
+                contents=prompt,
             )
-        
-        response = client.models.generate_content(
-            model="gemini-2.5-flash",
-            contents=prompt,
-        )
-        
-        review_text = response.text if hasattr(response, 'text') else str(response)
-        logger.info("Successfully generated user review")
-        return review_text
-    except Exception as e:
-        logger.error(f"Failed to generate user review: {str(e)}")
-        raise RuntimeError(f"Failed to generate review: {str(e)}")
+            review_text = getattr(response, 'text', str(response))
+            logger.info("Successfully generated user review")
+            return review_text
+        except Exception as e:
+            err_str = str(e)
+            # Treat 503 or overload messages as transient and retry with backoff
+            if '503' in err_str or 'overload' in err_str.lower():
+                wait_time = 2 ** attempt
+                logger.warning(f"Model overloaded or service busy. Retrying in {wait_time}s... (Attempt {attempt+1}/{max_retries})")
+                time.sleep(wait_time)
+                continue
+            else:
+                logger.error(f"Failed to generate user review: {err_str}")
+                raise RuntimeError(f"Failed to generate review: {err_str}")
+
+    logger.error("All retries failed. Could not generate user review.")
+    return "⚠️ Unable to generate review at this time."
         
 if __name__ == "__main__":
     #owner = "pallets"
