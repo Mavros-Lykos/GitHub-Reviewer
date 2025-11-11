@@ -2,18 +2,18 @@
 
 An AI-powered web application that provides intelligent reviews and analysis of GitHub repositories and user profiles using Google's Gemini AI model.
 
-![GitHub Reviewer Banner](https://via.placeholder.com/800x200/0d6efd/ffffff?text=GitHub+Reviewer+🤖)
+<!-- ![GitHub Reviewer Banner](https://via.placeholder.com/800x200/0d6efd/ffffff?text=GitHub+Reviewer+🤖) -->
 
 ## 📸 Screenshots
-
+<!-- 
 ### Repository Review Interface
-![Repository Review](https://via.placeholder.com/800x500/f8f9fa/212529?text=Repository+Review+Interface)
+![Repository Review](https://via.placeholder.com/800x500/f8f9fa/212529?text=Repository+Review+Interface) -->
 
 ### User Profile Analysis
-![User Analysis](https://via.placeholder.com/800x500/f8f9fa/212529?text=User+Profile+Analysis)
+![User Analysis](screenshots/user.png)
 
-### AI-Generated Review Output
-![Review Output](https://via.placeholder.com/800x400/ffffff/0d6efd?text=AI+Review+Output+with+Markdown+Support)
+### AI-Generated Repository Review Output
+![Review Output](screenshots/repo.png)
 
 ## 🎯 Features
 
